@@ -1,0 +1,6 @@
+login : use # sudo -u postgres psql 
+in the terminal
+
+and then from there use 'CREATE DATABASE <database_name>;' (with the semi-colon)
+
+you can execute commands with regular sql syntax and make sure you have the semi-colon;
