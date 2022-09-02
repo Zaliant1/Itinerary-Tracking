@@ -1,11 +1,15 @@
 from datetime import datetime
 from sqlite3 import IntegrityError
+from time import time
+from datetime import datetime
 from .main import create_db_engine
-from .validation import UserValidation
+from .validation import SessionValidation, UserValidation
 
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, create_engine
 from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy.sql import func
+
 
 DeclarativeBase = declarative_base()
 
@@ -27,28 +31,16 @@ class UserDb(DeclarativeBase, BaseDbModel):
     # email = Column(String(50), unique=True, nullable=False)
     password = Column(String(60), nullable=False)
 
-    def __init__(self, email=None, user_id=None):
+    def __init__(self, password=None, email=None, user_id=None):
         if email:
             self.email = email
 
         if user_id:
             self.id = user_id
+        
+        if password:
+            self.password = password
 
-    def add(self, user: UserValidation):
-        with Session(engine) as session:
-            session.add(user)
-            session.commit()
-            session.refresh(self)
-    
-    def get(self):
-        engine = create_db_engine()
-        with Session(engine) as session:
-            user = session.query(UserDb).filter((UserDb.email == self.email) | (UserDb.id == self.id)).first()
-
-        return user
-
-    def validate_password(self, password_check):
-        return self.password == password_check
 
 class ItineraryDb(DeclarativeBase, BaseDbModel):
     __tablename__ = "itinerary"
@@ -91,15 +83,11 @@ class ParkDb(DeclarativeBase, BaseDbModel):
 
 class SessionDb(DeclarativeBase, BaseDbModel):
     __tablename__ = "sessions"
-    id = Column(Integer, primary_key=True)
+    id = Column(String(36), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
-    expiration_datetime = Column(DateTime, nullable=False)
+    expiration_datetime = Column(DateTime(timezone=False), nullable=False, server_default=func.utcnow())
 
 
-    def get(self):
-        engine = create_db_engine()
-        with Session(engine) as session:
-            session_get = session.query(SessionDb).filter(UserDb.id == self.id).first()
 
 
 UserDb.metadata.create_all(engine)

@@ -35,11 +35,6 @@ const RegistrationForm = () => {
 
   const handleSubmit = () => {
     console.log(email, password, confirmPassword);
-    let registrationInfo = {
-      email: email,
-      passsword: password,
-      confirmPassword: confirmPassword,
-    };
 
     if (password !== confirmPassword) {
       alert("passwords do not match");

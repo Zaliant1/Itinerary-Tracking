@@ -1,32 +1,30 @@
 import React, { createContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const UserContext = createContext();
+export const UserContext = createContext({});
 
 export const UserProvider = (props) => {
-  const [token, setToken] = useState(localStorage.getItem("awesomeLeadsToken"));
+  const [user, setUserState] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const requestOptions = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      };
+    if (
+      !user &&
+      window.location.pathname !== "/login" &&
+      window.location.pathname !== "/register"
+    ) {
+      window.location.href = "/login";
+    }
+  }, [user]);
 
-      const response = await fetch("/session", requestOptions);
-
-      if (!response.ok) {
-        setToken(null);
-      }
-      localStorage.setItem("session", token);
-    };
-    fetchUser();
-  }, [token]);
+  const setUser = (newUser) => {
+    localStorage.setItem("user", JSON.stringify(newUser));
+    setUserState(newUser);
+  };
 
   return (
-    <UserContext.Provider value={[token, setToken]}>
+    <UserContext.Provider value={[user, setUser]}>
       {props.children}
     </UserContext.Provider>
   );

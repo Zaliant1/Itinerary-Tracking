@@ -8,12 +8,14 @@ class UserValidation(BaseModel):
 class UserResponseValidation(BaseModel):
     id: int
     email: str
+    session_id: str
+    session_expiration: datetime
 
-
-class SessionValidation(BaseModel):
-    id: int
-    user_id: int
 
 class SessionResponseValidation(BaseModel):
     id: int
-    expiration_datetime: datetime
+    email: str
+    user_id: int
+
+class SessionValidation(BaseModel):
+    email: str

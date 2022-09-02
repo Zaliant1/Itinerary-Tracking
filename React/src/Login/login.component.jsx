@@ -1,16 +1,18 @@
-import { useRef, useState, useEffect, React, useContext } from "react";
+import { useRef, useState, useEffect, useContext, Fragment } from "react";
 import { UserContext } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const userRef = useRef();
   const errRef = useRef();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
-  const [, setToken] = useContext;
+  // const [token, setToken] = useContext();
+  const [user, setUser] = useContext(UserContext);
 
   useEffect(() => {
     userRef.current.focus();
@@ -34,15 +36,16 @@ const Login = () => {
           alert(data.detail);
         });
       } else if (res.status === 200) {
-        setEmail("");
-        setPassword("");
-        setSuccess(true);
+        res.json().then((user) => {
+          setUser(user);
+          navigate("/itineraries");
+        });
       }
     });
   };
 
   return (
-    <>
+    <Fragment>
       {success ? (
         <section>
           <h1> You are logged in!</h1>
@@ -83,12 +86,12 @@ const Login = () => {
             <br />
             <span className="line">
               {/* put router link here*/}
-              <a href="google.com">Sign Up</a>
+              <a href="/register">Sign Up</a>
             </span>
           </p>
         </div>
       )}
-    </>
+    </Fragment>
   );
 };
 
