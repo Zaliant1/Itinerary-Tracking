@@ -2,11 +2,11 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.exc import IntegrityError
+from crud.itineraries import CrudItinerary
 from db.main import create_db_engine
 
-from db.models import UserDb, SessionDb
 from crud.user import CrudUser
-from db.validation import UserResponseValidation, UserValidation, SessionResponseValidation, SessionValidation
+from db.validation import ItineraryValidation, UserResponseValidation, UserValidation
 from utils import ValidateSession
 
 
@@ -60,5 +60,43 @@ async def sign_up(user: UserValidation, engine=Depends(create_db_engine)):
 
 
 @app.get("/itineraries/{user_id}", dependencies=[Depends(ValidateSession())])
-async def list_itinerary(user_id):
-    return {}
+async def list_itinerary(user_id,  engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    itineraries = crud.list_itineraries_by_user_id(user_id=user_id)
+
+ 
+
+
+    if not user_id:
+        raise HTTPException(status_code=403, detail="forbidden")
+
+    return itineraries
+
+
+
+@app.post("/itineraries/{user_id}", dependencies=[Depends(ValidateSession())])
+async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    itineraries = crud.add_itinerary(user_id=user_id, name=itinerary.name, starte_date=itinerary.start_date, end_date = itinerary.end_date)
+
+    for i in itineraries.items:
+        crud.add_itinerary_item(i)
+
+
+    if not user_id:
+        raise HTTPException(status_code=403, detail="forbidden")
+
+    return itineraries
+
+@app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
+async def get_itinerary(user_id,  engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    itineraries = crud.get_itinerary(user_id=user_id)
+
+ 
+
+
+    if not user_id:
+        raise HTTPException(status_code=403, detail="forbidden")
+
+    return itineraries

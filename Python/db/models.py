@@ -1,13 +1,10 @@
 from datetime import datetime
-from sqlite3 import IntegrityError
-from time import time
-from datetime import datetime
 from .main import create_db_engine
-from .validation import SessionValidation, UserValidation
+
 
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, create_engine
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 
 

@@ -1,12 +1,11 @@
-from db.validation import UserValidation, SessionValidation
-from db.models import UserDb, SessionDb
+from db.validation import UserValidation
+from db.models import ItineraryDb, UserDb, SessionDb
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from uuid import uuid4
+from crud.base import CrudBase
 
-class CrudBase:
-    def __init__(self, engine):
-        self.engine = engine
+
 
 class CrudUser(CrudBase):
     def add_user(self, user: UserValidation):
@@ -52,3 +51,10 @@ class CrudUser(CrudBase):
             return False
         
         return user_session.expiration_datetime > datetime.utcnow()
+
+
+    def get_itineraries(self, user_id):
+        with Session(self.engine) as session:
+            itineraries = session.query(ItineraryDb).filter(ItineraryDb.user_id == user_id)
+        
+        return itineraries

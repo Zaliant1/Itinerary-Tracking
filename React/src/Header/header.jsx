@@ -6,7 +6,6 @@ const Header = () => {
 
   // console.log(user);
   useEffect(() => {
-    // if (user) {
     fetch(`/itineraries/${user.id}`, {
       headers: {
         authorization: user.session_id,
@@ -16,7 +15,6 @@ const Header = () => {
         console.log(res);
       });
     });
-    // }
   });
 
   if (!user) {
