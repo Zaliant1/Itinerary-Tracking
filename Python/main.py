@@ -1,3 +1,5 @@
+from email.policy import HTTP
+from textwrap import indent
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -6,8 +8,10 @@ from crud.itineraries import CrudItinerary
 from db.main import create_db_engine
 
 from crud.user import CrudUser
-from db.validation import ItineraryValidation, UserResponseValidation, UserValidation
+from db.validation import ItineraryResponseValidation, ItineraryValidation, UserResponseValidation, UserValidation
 from utils import ValidateSession
+
+
 
 
 app = FastAPI()
@@ -63,6 +67,7 @@ async def sign_up(user: UserValidation, engine=Depends(create_db_engine)):
 async def list_itinerary(user_id,  engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
     itineraries = crud.list_itineraries_by_user_id(user_id=user_id)
+    print(itineraries)
 
  
 
@@ -74,29 +79,32 @@ async def list_itinerary(user_id,  engine=Depends(create_db_engine)):
 
 
 
-@app.post("/itineraries/{user_id}", dependencies=[Depends(ValidateSession())])
+@app.post("/itineraries/{user_id}", dependencies=[Depends(ValidateSession())], response_model=ItineraryResponseValidation)
 async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(create_db_engine)):
+    itinerary.user_id = user_id
     crud = CrudItinerary(engine)
-    itineraries = crud.add_itinerary(user_id=user_id, name=itinerary.name, starte_date=itinerary.start_date, end_date = itinerary.end_date)
-
-    for i in itineraries.items:
-        crud.add_itinerary_item(i)
 
 
-    if not user_id:
-        raise HTTPException(status_code=403, detail="forbidden")
-
-    return itineraries
-
-@app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
-async def get_itinerary(user_id,  engine=Depends(create_db_engine)):
-    crud = CrudItinerary(engine)
-    itineraries = crud.get_itinerary(user_id=user_id)
-
- 
+    try:
+        new_itinerary = crud.add_itinerary(itinerary)
+        return ItineraryResponseValidation(id=new_itinerary.id)
+        
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Network Error, Cannot Resolve")
+    
 
 
-    if not user_id:
-        raise HTTPException(status_code=403, detail="forbidden")
 
-    return itineraries
+
+
+# @app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
+# async def get_itinerary(user_id,  engine=Depends(create_db_engine)):
+#     crud = CrudItinerary(engine)
+#     itineraries = crud.get_itinerary(user_id=user_id)
+    
+
+
+#     if not user_id:
+#         raise HTTPException(status_code=403, detail="forbidden")
+
+#     return itineraries

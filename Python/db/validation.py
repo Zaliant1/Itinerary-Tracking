@@ -32,11 +32,11 @@ class ItineraryItemValidation(BaseModel):
 
 class ItineraryValidation(BaseModel):
     name: str
-    descrption: str
     user_id: int
+    created_date: datetime
     start_date: datetime
     end_date: datetime
-    items: List[ItineraryItemValidation]
+    # items: List[ItineraryItemValidation]
 
 class ItineraryResponseValidation(BaseModel):
     id: int

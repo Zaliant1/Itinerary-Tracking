@@ -1,4 +1,5 @@
 from datetime import datetime
+from tracemalloc import start
 from .main import create_db_engine
 
 
@@ -25,7 +26,6 @@ class UserDb(DeclarativeBase, BaseDbModel):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     email = Column(String(50), nullable=False)
-    # email = Column(String(50), unique=True, nullable=False)
     password = Column(String(60), nullable=False)
 
     def __init__(self, password=None, email=None, user_id=None):
@@ -42,16 +42,29 @@ class UserDb(DeclarativeBase, BaseDbModel):
 class ItineraryDb(DeclarativeBase, BaseDbModel):
     __tablename__ = "itinerary"
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
+    user_id = Column(Integer, nullable=False)
     name = Column(String(50), nullable=False)
     created_date = Column(DateTime, nullable=False)
-    updated_date = Column(DateTime, nullable=False)
+    updated_date = Column(DateTime, nullable=True)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
-    is_publushed = Column(Boolean)
+    is_publushed = Column(Boolean, nullable=True)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, name=None, user_id=None, created_date=None, updated_date=None, start_date=None, end_date=None, is_published=None):
+        if name:
+            self.name = name
+        if user_id:
+            self.user_id = user_id
+        if created_date:
+            self.created_date = created_date
+        if updated_date:
+            self.updated_date = updated_date
+        if start_date:
+            self.start_date = start_date
+        if end_date:
+            self.end_date = end_date
+        if is_published:
+            self.is_publushed = is_published
 
 
 

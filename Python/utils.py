@@ -9,5 +9,5 @@ class ValidateSession:
             crud = CrudUser(create_db_engine())
             is_valid = crud.validate_session(request.headers['authorization'])
             if not is_valid:
-                raise HTTPException(status_code=403, detail="Invalid Session")
+                raise HTTPException(status_code=403, detail="Invalid Session, Please Log In Again")
                 
