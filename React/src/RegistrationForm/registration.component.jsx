@@ -8,15 +8,6 @@ const RegistrationForm = () => {
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [resData, setResData] = useState(null);
-  // let registrationInfo = { object: email };
-  // let registrationInfo = [email, password, confirmPassword];
-
-  // useEffect(() => {
-  //   fetch(`/registration/${registrationInfo}`).then((response) => {
-  //     console.log("response", response);
-  //     setResData(registrationInfo);
-  //   });
-  // }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;

@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydoc import describe
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class UserValidation(BaseModel):
     email: str
@@ -13,7 +13,6 @@ class UserResponseValidation(BaseModel):
     session_id: str
     session_expiration: datetime
 
-
 class SessionResponseValidation(BaseModel):
     id: int
     email: str
@@ -22,21 +21,17 @@ class SessionResponseValidation(BaseModel):
 class SessionValidation(BaseModel):
     email: str
 
-
-
 class ItineraryItemValidation(BaseModel):
-    itinerary_id: int
     start_datetime: datetime
     end_datetime: datetime
-    description: datetime
+    description: str
 
 class ItineraryValidation(BaseModel):
     name: str
-    user_id: int
-    created_date: datetime
-    start_date: datetime
-    end_date: datetime
-    # items: List[ItineraryItemValidation]
+    user_id: int = None
+    start_datetime: datetime
+    end_datetime: datetime
+    items: List[ItineraryItemValidation] = None
 
 class ItineraryResponseValidation(BaseModel):
     id: int

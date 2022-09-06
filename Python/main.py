@@ -64,7 +64,7 @@ async def sign_up(user: UserValidation, engine=Depends(create_db_engine)):
 
 
 @app.get("/itineraries/{user_id}", dependencies=[Depends(ValidateSession())])
-async def list_itinerary(user_id,  engine=Depends(create_db_engine)):
+async def list_itinerary(user_id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
     itineraries = crud.list_itineraries_by_user_id(user_id=user_id)
     print(itineraries)

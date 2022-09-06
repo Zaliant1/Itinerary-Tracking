@@ -10,17 +10,28 @@ from uuid import uuid4
 class CrudItinerary(CrudBase):
 
     def add_itinerary(self,itinerary: ItineraryValidation):
-        with Session(self.engine) as session:
-            new_itinerary = ItineraryDb(name=itinerary.name, user_id=itinerary.user_id, created_date=itinerary.created_date, start_date=itinerary.start_date, end_date=itinerary.end_date)
+        with Session(self.engine, expire_on_commit=False) as session:
+            new_itinerary = ItineraryDb(name=itinerary.name, user_id=itinerary.user_id, created_datetime=datetime.utcnow(), start_datetime=itinerary.start_datetime, end_datetime=itinerary.end_datetime)
             session.add(new_itinerary)
             session.commit()
+            # session.refresh(new_itinerary)
+            # session.refresh(new_itinerary)
             session.refresh(new_itinerary)
+
+            if itinerary.items:
+                for i in itinerary.items:
+                    new_item = ItineraryItemDb(itinerary_id=new_itinerary.id, start_datetime=i.start_datetime, end_datetime=i.end_datetime, description=i.description)
+                    session.add(new_item)
+            
+            session.commit()
+            
+
         return new_itinerary
 
 
     def list_itineraries_by_user_id(self, user_id):
         with Session(self.engine) as session:
-            itineraries = session.query(ItineraryDb).filter(ItineraryDb.user_id == user_id)
+            itineraries = session.query(ItineraryDb).filter(ItineraryDb.user_id == user_id).all()
         
         return itineraries
     
