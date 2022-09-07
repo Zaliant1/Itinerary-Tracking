@@ -11,7 +11,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
-  // const [token, setToken] = useContext();
   const [user, setUser] = useContext(UserContext);
 
   useEffect(() => {

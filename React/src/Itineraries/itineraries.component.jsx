@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
+import { CardList } from "../ItineraryCards/intineraryCardList.component";
 import moment from "moment-timezone";
 
 import { UserContext } from "../context/AuthProvider";
-import "./itineraries.component.css";
+import "./itineraries.styles.css";
 
 const DEFAULT_ITEM_STATE = {
   description: "",
@@ -14,6 +13,7 @@ const DEFAULT_ITEM_STATE = {
 const TZ = moment.tz.guess();
 
 const Itineraries = () => {
+  const [itineraryList, setItineraryList] = useState([]);
   const [itinerary, setItinerary] = useState({
     items: [],
     start_datetime: "",
@@ -22,6 +22,19 @@ const Itineraries = () => {
   });
   const [item, setItem] = useState(DEFAULT_ITEM_STATE);
   const [user, setUser] = useContext(UserContext);
+
+  useEffect(() => {
+    fetch(`/itineraries/${user.id}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let itinList = data.map((el) => {
+          return el;
+        });
+        setItineraryList(itinList);
+      });
+  }, [user.id]);
 
   // useEffect(() => {
   //   fetch(`/itineraries/${user.id}`, {
@@ -203,6 +216,7 @@ const Itineraries = () => {
           </button>
         </div>
       </div>
+      <CardList itineraries={itineraryList} />
     </div>
   );
 };
