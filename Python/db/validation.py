@@ -31,8 +31,18 @@ class ItineraryValidation(BaseModel):
     user_id: int = None
     start_datetime: datetime
     end_datetime: datetime
+    is_published: bool = False
     items: List[ItineraryItemValidation] = None
 
 class ItineraryResponseValidation(BaseModel):
     id: int
+
+class GetItineraryResponseValidation(BaseModel):
+    is_published: bool = False
+    name: str
+    user_id: int
+    id: int
+    start_datetime: datetime
+    end_datetime: datetime
+    items: List[ItineraryItemValidation]
 

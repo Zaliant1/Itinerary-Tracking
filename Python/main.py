@@ -9,7 +9,7 @@ from db.main import create_db_engine
 
 from crud.user import CrudUser
 from db.validation import ItineraryResponseValidation, ItineraryValidation, UserResponseValidation, UserValidation
-from utils import ValidateSession
+from utils import ValidateSession, User
 
 
 
@@ -67,7 +67,7 @@ async def sign_up(user: UserValidation, engine=Depends(create_db_engine)):
 async def list_itinerary(user_id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
     itineraries = crud.list_itineraries_by_user_id(user_id=user_id)
-    print(itineraries)
+    
 
  
 
@@ -84,9 +84,10 @@ async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(
     itinerary.user_id = user_id
     crud = CrudItinerary(engine)
 
+    new_itinerary = crud.add_itinerary(itinerary)
+    
 
     try:
-        new_itinerary = crud.add_itinerary(itinerary)
         return ItineraryResponseValidation(id=new_itinerary.id)
         
     except IntegrityError:
@@ -98,16 +99,31 @@ async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(
 
 
 @app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
-async def get_itinerary(itinerary_id, engine=Depends(create_db_engine)):
+async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
-    # itinerary = crud.get_itinerary(itinerary_id=itinerary_id)
-    # print(itinerary)
-   
+    not_found = HTTPException(status_code=404, detail="Itinerary Not Found")
     
     try:
         itinerary = crud.get_itinerary(itinerary_id=itinerary_id)
-        return itinerary
-        
-    except IntegrityError:
-        raise HTTPException(status_code=404, detail="Network Error, Cannot Resolve")
 
+
+        if not itinerary:
+            raise not_found
+
+        elif itinerary['is_published']:
+            return itinerary
+
+        elif itinerary['user_id'] == user.user.id:
+            return itinerary
+
+        else:
+            raise not_found
+
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Itinerary Not Found")
+
+@app.get("/itineraries", dependencies=[Depends(ValidateSession())])
+async def get_itinerary(engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    #TODO return the list of PUBLISHED itineraries 
+    # Will not return the items of the itineries

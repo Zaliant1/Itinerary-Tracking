@@ -8,10 +8,9 @@ from uuid import uuid4
 
 
 class CrudItinerary(CrudBase):
-
     def add_itinerary(self,itinerary: ItineraryValidation):
         with Session(self.engine, expire_on_commit=False) as session:
-            new_itinerary = ItineraryDb(name=itinerary.name, user_id=itinerary.user_id, created_datetime=datetime.utcnow(), start_datetime=itinerary.start_datetime, end_datetime=itinerary.end_datetime)
+            new_itinerary = ItineraryDb(name=itinerary.name, user_id=itinerary.user_id, created_datetime=datetime.utcnow(), start_datetime=itinerary.start_datetime, end_datetime=itinerary.end_datetime, is_published=itinerary.is_published)
             session.add(new_itinerary)
             session.commit()
             session.refresh(new_itinerary)
@@ -32,16 +31,21 @@ class CrudItinerary(CrudBase):
             itineraries = session.query(ItineraryDb).filter(ItineraryDb.user_id == user_id).all()
         
         return itineraries
+
+    def list_itineraries(self, filter_published=True):
+        #TODO return list of itineraries
+        ...
     
     def get_itinerary(self, itinerary_id):
         with Session(self.engine) as session:
 
             itinerary = session.query(ItineraryDb).get(itinerary_id)
-            return itinerary
+            items = []
 
-            # items = session.query(ItineraryItemDb).filter(ItineraryItemDb.id == itinerary_id)
-            # # TODO: Construct a complete object/dictionary to return
-        
+            if itinerary:
+                items = session.query(ItineraryItemDb).filter(ItineraryItemDb.id == itinerary_id)
+            
+        return {**itinerary.__dict__, "items": [i.__dict__ for i in items]}
 
     def get_itinerary_item(self, item_id):
         ...

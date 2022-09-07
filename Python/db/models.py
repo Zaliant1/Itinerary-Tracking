@@ -38,7 +38,7 @@ class ItineraryDb(DeclarativeBase, BaseDbModel):
     updated_datetime = Column(DateTime, nullable=True)
     start_datetime = Column(DateTime, nullable=False)
     end_datetime = Column(DateTime, nullable=False)
-    is_publushed = Column(Boolean, nullable=True)
+    is_published = Column(Boolean, nullable=False)
 
 
 class ItineraryItemDb(DeclarativeBase, BaseDbModel):
