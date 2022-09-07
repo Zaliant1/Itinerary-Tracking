@@ -14,8 +14,6 @@ class CrudItinerary(CrudBase):
             new_itinerary = ItineraryDb(name=itinerary.name, user_id=itinerary.user_id, created_datetime=datetime.utcnow(), start_datetime=itinerary.start_datetime, end_datetime=itinerary.end_datetime)
             session.add(new_itinerary)
             session.commit()
-            # session.refresh(new_itinerary)
-            # session.refresh(new_itinerary)
             session.refresh(new_itinerary)
 
             if itinerary.items:
@@ -38,8 +36,8 @@ class CrudItinerary(CrudBase):
     def get_itinerary(self, itinerary_id):
         with Session(self.engine) as session:
 
-            for itinerary in session.query(ItineraryDb).filter_by(ItineraryDb.id == itinerary_id):
-                return itinerary
+            itinerary = session.query(ItineraryDb).get(itinerary_id)
+            return itinerary
 
             # items = session.query(ItineraryItemDb).filter(ItineraryItemDb.id == itinerary_id)
             # # TODO: Construct a complete object/dictionary to return

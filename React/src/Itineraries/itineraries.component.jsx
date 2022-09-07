@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { CardList } from "../ItineraryCards/intineraryCardList.component";
 import moment from "moment-timezone";
 
+import { Container, Row } from "react-bootstrap";
 import { UserContext } from "../context/AuthProvider";
 import "./itineraries.styles.css";
 
@@ -216,7 +217,11 @@ const Itineraries = () => {
           </button>
         </div>
       </div>
-      <CardList itineraries={itineraryList} />
+      <Container>
+        <Row>
+          <CardList itineraries={itineraryList} />
+        </Row>
+      </Container>
     </div>
   );
 };

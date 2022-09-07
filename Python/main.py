@@ -97,14 +97,17 @@ async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(
 
 
 
-# @app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
-# async def get_itinerary(user_id,  engine=Depends(create_db_engine)):
-#     crud = CrudItinerary(engine)
-#     itineraries = crud.get_itinerary(user_id=user_id)
+@app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
+async def get_itinerary(itinerary_id, engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    # itinerary = crud.get_itinerary(itinerary_id=itinerary_id)
+    # print(itinerary)
+   
     
+    try:
+        itinerary = crud.get_itinerary(itinerary_id=itinerary_id)
+        return itinerary
+        
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Network Error, Cannot Resolve")
 
-
-#     if not user_id:
-#         raise HTTPException(status_code=403, detail="forbidden")
-
-#     return itineraries
