@@ -11,14 +11,22 @@ export const ItineraryCard = ({ itinerary }) => {
         md="4"
         style={{ marginBottom: "15px", marginTop: "15px" }}
       >
-        <Card>
+        <Card
+          style={{
+            backgroundColor: "white",
+            borderRadius: "5px",
+            width: "550px",
+            margin: "20px auto",
+            padding: "20px",
+          }}
+        >
           <Card.Body>
             <Link to={`/itinerary/${itinerary.id}`}>
-              <p>{itinerary.name}</p>
-              <p>
-                {itinerary.start_datetime} - {itinerary.end_datetime}
-              </p>
+              <p>Itinerary : {itinerary.name}</p>
             </Link>
+            <p>
+              Dates : {itinerary.start_datetime} - {itinerary.end_datetime}
+            </p>
           </Card.Body>
         </Card>
       </Col>

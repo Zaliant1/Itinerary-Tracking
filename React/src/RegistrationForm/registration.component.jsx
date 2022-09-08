@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/AuthProvider";
+import { useParams, useNavigate } from "react-router-dom";
 
 import "./registration.styles.css";
 
@@ -7,7 +8,9 @@ const RegistrationForm = () => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
-  const [resData, setResData] = useState(null);
+  const [user, setUser] = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -40,6 +43,11 @@ const RegistrationForm = () => {
         if (res.status === 422) {
           res.json().then((data) => {
             alert(data.detail);
+          });
+        } else if (res.status === 200) {
+          res.json().then((user) => {
+            setUser(user);
+            navigate("/itineraries");
           });
         }
       });
@@ -89,13 +97,10 @@ const RegistrationForm = () => {
           />
         </div>
       </div>
-      <div class="footer">
-        <button type="submit" class="btn" onClick={() => handleSubmit()}>
+      <div className="footer">
+        <button type="submit" className="btn" onClick={() => handleSubmit()}>
           Register
         </button>
-      </div>
-      <div>
-        <h1>hi {resData}</h1>
       </div>
     </div>
   );

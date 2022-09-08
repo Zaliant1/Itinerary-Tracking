@@ -5,21 +5,6 @@ const Header = () => {
   const [user, setUser] = useContext(UserContext);
 
   // console.log(user);
-  useEffect(() => {
-    fetch(`/itineraries/${user.id}`, {
-      headers: {
-        authorization: user.session_id,
-      },
-    }).then((data) => {
-      data.json().then((res) => {
-        console.log(res);
-      });
-    });
-  });
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <nav className="bg-dark navbar-dark navbar">

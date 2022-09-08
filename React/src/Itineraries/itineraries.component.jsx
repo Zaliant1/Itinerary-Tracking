@@ -15,18 +15,22 @@ const TZ = moment.tz.guess();
 
 const Itineraries = () => {
   const [itineraryList, setItineraryList] = useState([]);
+  const [publishedItineraryList, setPublishedItineraryList] = useState([]);
   const [itinerary, setItinerary] = useState({
     items: [],
     start_datetime: "",
     end_datetime: "",
     name: "",
+    is_published: false,
   });
   const [item, setItem] = useState(DEFAULT_ITEM_STATE);
   const [user, setUser] = useContext(UserContext);
-
-  useEffect(() => {
+  const fetchItineraries = () => {
     fetch(`/itineraries/${user.id}`, {
       method: "GET",
+      headers: {
+        authorization: user.session_id,
+      },
     })
       .then((response) => response.json())
       .then((data) => {
@@ -35,24 +39,31 @@ const Itineraries = () => {
         });
         setItineraryList(itinList);
       });
+
+    fetch(`/itineraries`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let publishedList = data.map((el) => {
+          return el;
+        });
+        setPublishedItineraryList(publishedList);
+      });
+  };
+
+  useEffect(() => {
+    fetchItineraries();
   }, [user.id]);
 
-  // useEffect(() => {
-  //   fetch(`/itineraries/${user.id}`, {
-  //     headers: {
-  //       authorization: user.session_id,
-  //     },
-  //   }).then((data) => {
-  //     data.json().then((res) => {
-  //       console.log(res);
-  //     });
-  //   });
-  // });
-
-  const handleItineraryChange = (e, isDatetime) => {
+  const handleItineraryChange = (e, isDatetime, isCheckbox) => {
     const newState = { ...itinerary };
 
-    if (isDatetime) {
+    if (isCheckbox && e.target.checked) {
+      newState[e.target.id] = true;
+    } else if (isCheckbox && !e.target.checked) {
+      newState[e.target.id] = false;
+    } else if (isDatetime) {
       newState[e.target.id] = moment
         .tz(moment(e.target.value, "YYYY-MM-DD[T]HH:mm"), TZ)
         .utc()
@@ -94,9 +105,22 @@ const Itineraries = () => {
       },
       body: JSON.stringify(itinerary),
     }).then((res) => {
-      res.json().then((data) => {
-        console.log(data);
-      });
+      if (res.status === 200) {
+        console.log(itinerary);
+        setItinerary({
+          items: [],
+          start_datetime: "",
+          end_datetime: "",
+          name: "",
+          is_published: false,
+        });
+        fetchItineraries();
+      } else if (res.status === 500) {
+        console.log(res);
+        res.json().then((data) => {
+          console.log(data);
+        });
+      }
     });
   };
 
@@ -201,12 +225,23 @@ const Itineraries = () => {
         </div>
 
         <div className="footer">
+          <div>
+            <label htmlFor="is_published">Publicize Your Itinerary? : </label>
+
+            <input
+              type="checkbox"
+              id="is_published"
+              value={itinerary.is_published}
+              onChange={(e) => handleItineraryChange(e, false, true)}
+            />
+          </div>
+
           <button
             type="submit"
             className="btn"
             onClick={(e) => handleSubmit(e)}
           >
-            Register
+            Submit Itinerary
           </button>
           <button
             type="submit"
@@ -218,8 +253,11 @@ const Itineraries = () => {
         </div>
       </div>
       <Container>
-        <Row>
+        <Row className="row">
+          <h2>your list</h2>
           <CardList itineraries={itineraryList} />
+          <h2>published list</h2>
+          <CardList itineraries={publishedItineraryList} />
         </Row>
       </Container>
     </div>
