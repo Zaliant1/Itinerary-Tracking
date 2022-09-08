@@ -1,5 +1,3 @@
-from email.policy import HTTP
-from textwrap import indent
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,11 +11,9 @@ from utils import ValidateSession, User
 
 
 
-
 app = FastAPI()
 
 origins = ["localhost:3000" "127.0.0.1:3000"]
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,6 +27,7 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"hello": "world"}
+
 
 
 @app.post("/login", response_model=UserResponseValidation, )
@@ -63,15 +60,12 @@ async def sign_up(user: UserValidation, engine=Depends(create_db_engine)):
         raise HTTPException(status_code=422, detail="Email must be unique")
 
 
+
 @app.get("/itineraries/{user_id}", dependencies=[Depends(ValidateSession())])
 async def list_itinerary(user_id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
     itineraries = crud.list_itineraries_by_user_id(user_id=user_id)
     
-
- 
-
-
     if not user_id:
         raise HTTPException(status_code=403, detail="forbidden")
 
@@ -95,9 +89,6 @@ async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(
     
 
 
-
-
-
 @app.get("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
 async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
@@ -105,7 +96,6 @@ async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_
     
     try:
         itinerary = crud.get_itinerary(itinerary_id=itinerary_id)
-
 
         if not itinerary:
             raise not_found
@@ -125,5 +115,10 @@ async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_
 @app.get("/itineraries", dependencies=[Depends(ValidateSession())])
 async def get_itinerary(engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
-    #TODO return the list of PUBLISHED itineraries 
-    # Will not return the items of the itineries
+  
+
+    try:
+        published_itineraries = crud.list_published_itineraries()
+        return published_itineraries
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="No published itineraries found")

@@ -32,7 +32,12 @@ class CrudItinerary(CrudBase):
         
         return itineraries
 
-    def list_itineraries(self, filter_published=True):
+    def list_published_itineraries(self, filter_published=True):
+        with Session(self.engine) as session:
+
+            published_itineraries = session.query(ItineraryDb).filter(ItineraryDb.is_published == filter_published).all()
+        
+        return published_itineraries
         #TODO return list of itineraries
         ...
     
