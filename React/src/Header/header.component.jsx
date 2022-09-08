@@ -8,6 +8,7 @@ const Header = () => {
   const logout = () => {
     setUser(null);
     localStorage.clear();
+    window.location.reload(false);
   };
 
   // console.log(user);
