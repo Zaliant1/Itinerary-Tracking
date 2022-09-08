@@ -5,9 +5,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./registration.styles.css";
 
 const RegistrationForm = () => {
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [confirmPassword, setConfirmPassword] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [user, setUser] = useContext(UserContext);
 
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const RegistrationForm = () => {
     <div className="form">
       <div className="form-body">
         <div className="email">
-          <label className="form__label" for="email">
+          <label className="form__label" htmlFor="email">
             Email{" "}
           </label>
           <input
@@ -71,7 +71,7 @@ const RegistrationForm = () => {
           />
         </div>
         <div className="password">
-          <label className="form__label" for="password">
+          <label className="form__label" htmlFor="password">
             Password{" "}
           </label>
           <input
@@ -84,7 +84,7 @@ const RegistrationForm = () => {
           />
         </div>
         <div className="confirm-password">
-          <label className="form__label" for="confirmPassword">
+          <label className="form__label" htmlFor="confirmPassword">
             Confirm Password{" "}
           </label>
           <input

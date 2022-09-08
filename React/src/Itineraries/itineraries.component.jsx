@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { CardList } from "../ItineraryCards/intineraryCardList.component";
 import moment from "moment-timezone";
+import { useNavigate } from "react-router-dom";
 
 import { Container, Row } from "react-bootstrap";
 import { UserContext } from "../context/AuthProvider";
@@ -14,6 +15,7 @@ const DEFAULT_ITEM_STATE = {
 const TZ = moment.tz.guess();
 
 const Itineraries = () => {
+  const navigate = useNavigate();
   const [itineraryList, setItineraryList] = useState([]);
   const [publishedItineraryList, setPublishedItineraryList] = useState([]);
   const [itinerary, setItinerary] = useState({
@@ -25,36 +27,44 @@ const Itineraries = () => {
   });
   const [item, setItem] = useState(DEFAULT_ITEM_STATE);
   const [user, setUser] = useContext(UserContext);
-  const fetchItineraries = () => {
-    fetch(`/itineraries/${user.id}`, {
-      method: "GET",
-      headers: {
-        authorization: user.session_id,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        let itinList = data.map((el) => {
-          return el;
-        });
-        setItineraryList(itinList);
-      });
 
-    fetch(`/itineraries`, {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        let publishedList = data.map((el) => {
-          return el;
+  const fetchItineraries = () => {
+    if (user) {
+      fetch(`/itineraries/${user.id}`, {
+        method: "GET",
+        headers: {
+          authorization: user.session_id,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          let itinList = data.map((el) => {
+            return el;
+          });
+          setItineraryList(itinList);
         });
-        setPublishedItineraryList(publishedList);
-      });
+
+      fetch(`/itineraries`, {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          let publishedList = data.map((el) => {
+            return el;
+          });
+          setPublishedItineraryList(publishedList);
+        });
+    }
   };
 
   useEffect(() => {
-    fetchItineraries();
-  }, [user.id]);
+    if (user) {
+      fetchItineraries();
+    }
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
 
   const handleItineraryChange = (e, isDatetime, isCheckbox) => {
     const newState = { ...itinerary };
