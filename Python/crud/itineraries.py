@@ -24,6 +24,17 @@ class CrudItinerary(CrudBase):
 
         return new_itinerary
 
+    def delete_itinerary(self, itinerary_id):
+        with Session(self.engine) as session:
+           
+            itinerary = session.query(ItineraryDb).filter(ItineraryDb.id == itinerary_id).first()
+            print(itinerary)
+            session.delete(itinerary)
+            session.commit()
+            
+
+        return itinerary
+
 
     def list_itineraries_by_user_id(self, user_id):
         with Session(self.engine) as session:

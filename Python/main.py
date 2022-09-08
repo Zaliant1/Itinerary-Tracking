@@ -81,7 +81,6 @@ async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(
 
     try:
         new_itinerary = crud.add_itinerary(itinerary)
-        print(new_itinerary)
         return ItineraryResponseValidation(id=new_itinerary.id)
         
     except IntegrityError:
@@ -108,6 +107,20 @@ async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_
 
         else:
             raise not_found
+
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Itinerary Not Found")
+
+
+
+@app.post("/deleteitinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
+async def delete_itinerary(itinerary_id, engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    
+    try:
+        itinerary_to_delete = crud.delete_itinerary(itinerary_id=itinerary_id)
+        
+        return itinerary_to_delete
 
     except IntegrityError:
         raise HTTPException(status_code=404, detail="Itinerary Not Found")

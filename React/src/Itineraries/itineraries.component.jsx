@@ -112,8 +112,6 @@ const Itineraries = () => {
           is_published: false,
         });
         fetchItineraries();
-      } else if (res.status === 500) {
-        res.json().then((data) => {});
       }
     });
   };

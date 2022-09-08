@@ -12,6 +12,22 @@ export const HomepageCard = ({ homepageItem }) => {
     navigate("/login");
   };
 
+  const handleAddItineraryOnClick = (e) => {
+    e.preventDefault();
+    fetch(`/itineraries/${user.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(homepageItem),
+    }).then((res) => {
+      if (res.status === 200) {
+        window.location.reload();
+        alert("itinerary added");
+      }
+    });
+  };
+
   const AddButton = () => {
     if (!user) {
       return (
@@ -26,7 +42,15 @@ export const HomepageCard = ({ homepageItem }) => {
     } else if (user && user.id === homepageItem.user_id) {
       return null;
     } else if (user) {
-      return <button>Add to your itinerary</button>;
+      return (
+        <button
+          onClick={(e) => {
+            handleAddItineraryOnClick(e);
+          }}
+        >
+          Add to your itinerary
+        </button>
+      );
     }
   };
 
