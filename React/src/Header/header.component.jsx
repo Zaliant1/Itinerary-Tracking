@@ -1,14 +1,15 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { UserContext } from "../context/AuthProvider";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import "./header.styles.css";
 
 const Header = () => {
   const [user, setUser] = useContext(UserContext);
+  const navigate = useNavigate();
   const logout = () => {
     setUser(null);
     localStorage.clear();
-    window.location.reload(false);
+    navigate("/");
   };
 
   return (
