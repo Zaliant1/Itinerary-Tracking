@@ -2,7 +2,7 @@ from crud.user import CrudBase
 from db.validation import ItineraryValidation, UserValidation
 from db.models import ItineraryDb, ItineraryItemDb
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
 
@@ -38,8 +38,7 @@ class CrudItinerary(CrudBase):
             published_itineraries = session.query(ItineraryDb).filter(ItineraryDb.is_published == filter_published).all()
         
         return published_itineraries
-        #TODO return list of itineraries
-        ...
+
     
     def get_itinerary(self, itinerary_id):
         with Session(self.engine) as session:
@@ -52,5 +51,8 @@ class CrudItinerary(CrudBase):
             
         return {**itinerary.__dict__, "items": [i.__dict__ for i in items]}
 
-    def get_itinerary_item(self, item_id):
-        ...
+    def get_itinerary_items(self, itinerary_id):
+        with Session(self.engine) as session:
+            itinerary_list = session.query(ItineraryItemDb).filter(ItineraryItemDb.itinerary_id == itinerary_id).all()
+
+            return itinerary_list

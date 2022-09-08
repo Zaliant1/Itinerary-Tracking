@@ -77,11 +77,11 @@ async def list_itinerary(user_id, engine=Depends(create_db_engine)):
 async def add_itinerary(user_id, itinerary: ItineraryValidation, engine=Depends(create_db_engine)):
     itinerary.user_id = user_id
     crud = CrudItinerary(engine)
-
-    new_itinerary = crud.add_itinerary(itinerary)
-    
+   
 
     try:
+        new_itinerary = crud.add_itinerary(itinerary)
+        print(new_itinerary)
         return ItineraryResponseValidation(id=new_itinerary.id)
         
     except IntegrityError:
@@ -122,3 +122,12 @@ async def get_itinerary(engine=Depends(create_db_engine)):
         return published_itineraries
     except IntegrityError:
         raise HTTPException(status_code=404, detail="No published itineraries found")
+
+
+
+@app.get('/itineraryitems/{itinerary_id}', dependencies=[Depends(ValidateSession())])
+async def get_itinerary_items(itinerary_id, engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+
+    itinerary_item_list = crud.get_itinerary_items(itinerary_id=itinerary_id)
+    return itinerary_item_list

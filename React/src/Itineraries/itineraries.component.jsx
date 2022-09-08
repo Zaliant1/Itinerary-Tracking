@@ -106,7 +106,6 @@ const Itineraries = () => {
       body: JSON.stringify(itinerary),
     }).then((res) => {
       if (res.status === 200) {
-        console.log(itinerary);
         setItinerary({
           items: [],
           start_datetime: "",
@@ -116,10 +115,7 @@ const Itineraries = () => {
         });
         fetchItineraries();
       } else if (res.status === 500) {
-        console.log(res);
-        res.json().then((data) => {
-          console.log(data);
-        });
+        res.json().then((data) => {});
       }
     });
   };
