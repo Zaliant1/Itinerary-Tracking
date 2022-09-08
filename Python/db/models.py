@@ -1,5 +1,4 @@
 from datetime import datetime
-from tracemalloc import start
 from .main import create_db_engine
 
 

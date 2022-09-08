@@ -8,16 +8,6 @@ export const UserProvider = (props) => {
     JSON.parse(localStorage.getItem("user"))
   );
 
-  // useEffect(() => {
-  //   if (
-  //     !user &&
-  //     window.location.pathname !== "/login" &&
-  //     window.location.pathname !== "/register"
-  //   ) {
-  //     window.location.href = "/login";
-  //   }
-  // }, [user]);
-
   const setUser = (newUser) => {
     localStorage.setItem("user", JSON.stringify(newUser));
     setUserState(newUser);

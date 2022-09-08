@@ -11,8 +11,6 @@ const Header = () => {
     window.location.reload(false);
   };
 
-  // console.log(user);
-
   return (
     <div>
       <section>

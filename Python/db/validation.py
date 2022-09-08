@@ -1,7 +1,6 @@
 from datetime import datetime
-from pydoc import describe
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 class UserValidation(BaseModel):
     email: str

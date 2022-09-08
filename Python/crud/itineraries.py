@@ -1,9 +1,8 @@
 from crud.user import CrudBase
-from db.validation import ItineraryValidation, UserValidation
+from db.validation import ItineraryValidation
 from db.models import ItineraryDb, ItineraryItemDb
 from sqlalchemy.orm import Session
 from datetime import datetime
-from uuid import uuid4
 
 
 
