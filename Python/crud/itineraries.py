@@ -46,7 +46,7 @@ class CrudItinerary(CrudBase):
             items = []
 
             if itinerary:
-                items = session.query(ItineraryItemDb).filter(ItineraryItemDb.id == itinerary_id)
+                items = session.query(ItineraryItemDb).filter(ItineraryItemDb.itinerary_id == itinerary_id).all()
             
         return {**itinerary.__dict__, "items": [i.__dict__ for i in items]}
 

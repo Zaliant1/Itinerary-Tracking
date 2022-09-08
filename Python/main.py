@@ -125,7 +125,7 @@ async def get_itinerary(engine=Depends(create_db_engine)):
 
 
 
-@app.get('/itineraryitems/{itinerary_id}', dependencies=[Depends(ValidateSession())])
+@app.get('/itinerary/{itinerary_id}/items', dependencies=[Depends(ValidateSession())])
 async def get_itinerary_items(itinerary_id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
 

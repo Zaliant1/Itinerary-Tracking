@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { CardList } from "../ItineraryCards/intineraryCardList.component";
+import { CardList } from "../ItineraryCards/Itineraries/intineraryCardList.component";
 import moment from "moment-timezone";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +17,6 @@ const TZ = moment.tz.guess();
 const Itineraries = () => {
   const navigate = useNavigate();
   const [itineraryList, setItineraryList] = useState([]);
-  const [publishedItineraryList, setPublishedItineraryList] = useState([]);
   const [itinerary, setItinerary] = useState({
     items: [],
     start_datetime: "",
@@ -42,17 +41,6 @@ const Itineraries = () => {
             return el;
           });
           setItineraryList(itinList);
-        });
-
-      fetch(`/itineraries`, {
-        method: "GET",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          let publishedList = data.map((el) => {
-            return el;
-          });
-          setPublishedItineraryList(publishedList);
         });
     }
   };
@@ -259,11 +247,9 @@ const Itineraries = () => {
         </div>
       </div>
       <Container>
-        <Row className="row">
+        <Row>
           <h2>your list</h2>
           <CardList itineraries={itineraryList} />
-          <h2>published list</h2>
-          <CardList itineraries={publishedItineraryList} />
         </Row>
       </Container>
     </div>

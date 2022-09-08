@@ -11,6 +11,17 @@ const Header = () => {
     localStorage.clear();
     navigate("/");
   };
+  const SignInDisplay = () => {
+    if (!user) {
+      return (
+        <Link to="/login">
+          <h3>Sign in</h3>
+        </Link>
+      );
+    } else if (user) {
+      return <h3 onClick={logout}>Sign out</h3>;
+    }
+  };
 
   return (
     <div>
@@ -25,11 +36,7 @@ const Header = () => {
           <Link to="/register">
             <h3>Register</h3>
           </Link>
-          <Link to="/login">
-            <h3>sign in</h3>
-          </Link>
-
-          <h3 onClick={logout}>sign out</h3>
+          <SignInDisplay />
         </div>
       </section>
       <Outlet />
