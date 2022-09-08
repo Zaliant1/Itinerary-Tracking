@@ -54,14 +54,10 @@ const Itineraries = () => {
     }
   }, []);
 
-  const handleItineraryChange = (e, isDatetime, isCheckbox) => {
+  const handleItineraryChange = (e, isDatetime) => {
     const newState = { ...itinerary };
 
-    if (isCheckbox && e.target.checked) {
-      newState[e.target.id] = true;
-    } else if (isCheckbox && !e.target.checked) {
-      newState[e.target.id] = false;
-    } else if (isDatetime) {
+    if (isDatetime) {
       newState[e.target.id] = moment
         .tz(moment(e.target.value, "YYYY-MM-DD[T]HH:mm"), TZ)
         .utc()
@@ -217,17 +213,6 @@ const Itineraries = () => {
         </div>
 
         <div className="footer">
-          <div>
-            <label htmlFor="is_published">Publicize Your Itinerary? : </label>
-
-            <input
-              type="checkbox"
-              id="is_published"
-              value={itinerary.is_published}
-              onChange={(e) => handleItineraryChange(e, false, true)}
-            />
-          </div>
-
           <button
             type="submit"
             className="btn"

@@ -113,17 +113,39 @@ async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_
 
 
 
-@app.post("/deleteitinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
-async def delete_itinerary(itinerary_id, engine=Depends(create_db_engine)):
+@app.delete("/itinerary/{id}", dependencies=[Depends(ValidateSession())])
+async def delete_itinerary(id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
     
     try:
-        itinerary_to_delete = crud.delete_itinerary(itinerary_id=itinerary_id)
+        itinerary_to_delete = crud.delete_itinerary(itinerary_id=id)
         
         return itinerary_to_delete
 
     except IntegrityError:
         raise HTTPException(status_code=404, detail="Itinerary Not Found")
+
+
+
+@app.put("/itinerary/{itinerary_id}/published/{is_published}", dependencies=[Depends(ValidateSession())])
+async def update_itinerary(itinerary_id, is_published, engine=Depends(create_db_engine)):
+    crud = CrudItinerary(engine)
+    is_published = True if is_published.lower()=="true" else False
+    
+
+
+    try:
+        itinerary_to_update = crud.update_itinerary(itinerary_id=itinerary_id, is_published_bool=is_published)
+
+
+    # what im getting : true
+    # what i need is : True
+        return itinerary_to_update
+
+    except IntegrityError:
+        raise HTTPException(status_code=404, detail="Itinerary Not Found")
+
+
 
 @app.get("/itineraries", dependencies=[Depends(ValidateSession())])
 async def get_itinerary(engine=Depends(create_db_engine)):

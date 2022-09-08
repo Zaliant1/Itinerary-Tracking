@@ -28,10 +28,18 @@ class CrudItinerary(CrudBase):
         with Session(self.engine) as session:
            
             itinerary = session.query(ItineraryDb).filter(ItineraryDb.id == itinerary_id).first()
-            print(itinerary)
             session.delete(itinerary)
             session.commit()
-            
+
+        return itinerary
+
+    def update_itinerary(self, itinerary_id, is_published_bool):
+        with Session(self.engine) as session:
+        
+            itinerary = session.query(ItineraryDb).filter(ItineraryDb.id == itinerary_id).one()
+            itinerary.is_published = is_published_bool
+
+            session.commit()
 
         return itinerary
 
