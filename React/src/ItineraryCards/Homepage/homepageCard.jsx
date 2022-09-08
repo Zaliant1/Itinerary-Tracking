@@ -13,11 +13,7 @@ export const HomepageCard = ({ homepageItem }) => {
   };
 
   const AddButton = () => {
-    if (user.id === homepageItem.user_id) {
-      return null;
-    } else if (user) {
-      return <button>Add to your itinerary</button>;
-    } else if (!user) {
+    if (!user) {
       return (
         <button
           onClick={(e) => {
@@ -27,6 +23,10 @@ export const HomepageCard = ({ homepageItem }) => {
           Log in to add to your itinerary
         </button>
       );
+    } else if (user && user.id === homepageItem.user_id) {
+      return null;
+    } else if (user) {
+      return <button>Add to your itinerary</button>;
     }
   };
 
@@ -41,7 +41,7 @@ export const HomepageCard = ({ homepageItem }) => {
           id={`card-${homepageItem.user_id}`}
           style={{
             backgroundColor:
-              user.id === homepageItem.user_id ? "#a5e8aa" : "white",
+              user && user.id === homepageItem.user_id ? "#a5e8aa" : "white",
             borderRadius: "5px",
             width: "550px",
             margin: "20px auto",
