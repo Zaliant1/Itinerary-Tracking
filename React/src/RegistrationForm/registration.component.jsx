@@ -1,48 +1,51 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { UserContext } from "../context/AuthProvider";
-import { useParams, useNavigate } from "react-router-dom";
-
-import "./registration.styles.css";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  TextField,
+  Container,
+  Box,
+  Alert,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 
 const RegistrationForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState();
+  const [userForm, setUserForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [user, setUser] = useContext(UserContext);
 
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
-    const { id, value } = e.target;
-
-    if (id === "email") {
-      setEmail(value);
-      console.log(value);
-    }
-    if (id === "password") {
-      setPassword(value);
-    }
-    if (id === "confirmPassword") {
-      setConfirmPassword(value);
-    }
+    const newState = { ...userForm };
+    newState[e.target.id] = e.target.value;
+    setUserForm(newState);
   };
 
   const handleSubmit = () => {
-    console.log(email, password, confirmPassword);
-
-    if (password !== confirmPassword) {
-      alert("passwords do not match");
+    if (userForm.password !== userForm.confirmPassword) {
+      setError("Passwords do not match");
     } else {
       fetch("/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: email, password: password }),
+        body: JSON.stringify({
+          email: userForm.email,
+          password: userForm.password,
+        }),
       }).then((res) => {
         if (res.status === 422) {
           res.json().then((data) => {
-            alert(data.detail);
+            setError(data.detail);
           });
         } else if (res.status === 200) {
           res.json().then((user) => {
@@ -55,54 +58,57 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="form">
-      <div className="form-body">
-        <div className="email">
-          <label className="form__label" htmlFor="email">
-            Email{" "}
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="form__input"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => handleInputChange(e)}
-          />
-        </div>
-        <div className="password">
-          <label className="form__label" htmlFor="password">
-            Password{" "}
-          </label>
-          <input
-            className="form__input"
-            type="password"
-            id="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => handleInputChange(e)}
-          />
-        </div>
-        <div className="confirm-password">
-          <label className="form__label" htmlFor="confirmPassword">
-            Confirm Password{" "}
-          </label>
-          <input
-            className="form__input"
-            type="password"
-            id="confirmPassword"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => handleInputChange(e)}
-          />
-        </div>
-      </div>
-      <div className="footer">
-        <button type="submit" className="btn" onClick={() => handleSubmit()}>
-          Register
-        </button>
-      </div>
-    </div>
+    <React.Fragment>
+      <Container sx={{ mt: 2 }}>
+        {error ? (
+          <Alert severity="error" sx={{ mt: 2, mb: 2 }}>
+            {error}
+          </Alert>
+        ) : null}
+        <Card>
+          <CardContent>
+            <Typography variant="h5">Sign Up</Typography>
+            <Box component="form">
+              <Box>
+                <TextField
+                  color="primary"
+                  label="Email"
+                  variant="standard"
+                  id="email"
+                  sx={{ mr: 2, flexGrow: 1 }}
+                  onChange={(e) => handleInputChange(e)}
+                  value={userForm.email}
+                />
+              </Box>
+              <TextField
+                color="primary"
+                label="Password"
+                variant="standard"
+                type="password"
+                id="password"
+                onChange={(e) => handleInputChange(e)}
+                value={userForm.password}
+                sx={{ mr: 2 }}
+              />
+              <TextField
+                color="primary"
+                label="Confirm Password"
+                variant="standard"
+                type="password"
+                id="confirmPassword"
+                onChange={(e) => handleInputChange(e)}
+                value={userForm.confirmPassword}
+              />
+            </Box>
+            <Box sx={{ textAlign: "left", mt: 2 }}>
+              <Button variant="contained" sx={{ mr: 2 }} onClick={handleSubmit}>
+                Submit
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+      </Container>
+    </React.Fragment>
   );
 };
 export default RegistrationForm;

@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { UserContext } from "../context/AuthProvider";
-import { CardListItems } from "../ItineraryCards/ItineraryItems/intineraryItemsCardList.component";
+import { ItineraryItemCard } from "./itineraryItemCard.component";
+import { Box, Typography, Container } from "@mui/material";
+import moment from "moment-timezone";
 
-import "./itinerary.styles.css";
+const TZ = moment.tz.guess();
+const DISPLAY_FORMAT = "MMM Do YYYY [at] hh:mma z";
 
 export const Itinerary = () => {
   let { itinerary_id } = useParams();
-  const [itineraryInfo, setItineraryInfo] = useState({ items: [] });
+  const [itinerary, setItinerary] = useState({ items: [] });
   const [user, setUser] = useContext(UserContext);
 
   useEffect(() => {
@@ -20,16 +23,35 @@ export const Itinerary = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setItineraryInfo(data);
+          setItinerary(data);
         });
     }
   }, [user]);
 
   return (
-    <div className="container">
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-      <pre>{JSON.stringify(itineraryInfo, null, 2)}</pre>
-      <CardListItems itineraryItems={itineraryInfo.items} />
-    </div>
+    <Container sx={{ mt: 2 }}>
+      <Box sx={{ textAlign: "center" }}>
+        <Typography variant="h4">{itinerary.name}</Typography>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="subtitle" sx={{ mr: 2 }}>
+            Start Date:
+          </Typography>
+          <Typography variant="body">
+            {moment(itinerary.start_datetime).tz(TZ).format(DISPLAY_FORMAT)}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography variant="subtitle" sx={{ mr: 2 }}>
+            End Date:
+          </Typography>
+          <Typography variant="body">
+            {moment(itinerary.end_datetime).tz(TZ).format(DISPLAY_FORMAT)}
+          </Typography>
+        </Box>
+      </Box>
+      {itinerary.items.map((itineraryItem) => (
+        <ItineraryItemCard key={itineraryItem.id} item={itineraryItem} />
+      ))}
+    </Container>
   );
 };

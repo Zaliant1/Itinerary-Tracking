@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row } from "react-bootstrap";
-import { HomepageCardList } from "../ItineraryCards/Homepage/homepageCardList.component";
-
+import { Container } from "@mui/material";
+import { ItineraryCard } from "./itineraryCard.component";
+import { Alert } from "@mui/material";
 export const Homepage = () => {
+  const [message, setMessage] = useState({ type: null, text: null });
   const [publishedItineraryList, setPublishedItineraryList] = useState([]);
 
-  useEffect(() => {
+  const refreshItineraries = () => {
     fetch(`/itineraries`, {
       method: "GET",
     })
@@ -16,13 +17,31 @@ export const Homepage = () => {
         });
         setPublishedItineraryList(publishedList);
       });
+  };
+
+  const sendAlert = (type, message) => {
+    setMessage({ type: type, text: message });
+  };
+
+  useEffect(() => {
+    refreshItineraries();
   }, []);
 
   return (
     <Container>
-      <Row>
-        <HomepageCardList homepageItems={publishedItineraryList} />
-      </Row>
+      {message.text ? (
+        <Alert sx={{ mt: 2 }} severity={message.type}>
+          {message.text}
+        </Alert>
+      ) : null}
+      {publishedItineraryList.map((data) => (
+        <ItineraryCard
+          key={data.id}
+          itinerary={data}
+          refreshItineraries={refreshItineraries}
+          setMessage={sendAlert}
+        />
+      ))}
     </Container>
   );
 };
