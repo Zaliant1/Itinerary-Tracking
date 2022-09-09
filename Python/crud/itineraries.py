@@ -10,6 +10,7 @@ class CrudItinerary(CrudBase):
     def add_itinerary(self,itinerary: ItineraryValidation):
         with Session(self.engine, expire_on_commit=False) as session:
             new_itinerary = ItineraryDb(name=itinerary.name, user_id=itinerary.user_id, created_datetime=datetime.utcnow(), start_datetime=itinerary.start_datetime, end_datetime=itinerary.end_datetime, is_published=itinerary.is_published)
+            
             session.add(new_itinerary)
             session.commit()
             session.refresh(new_itinerary)
@@ -33,15 +34,16 @@ class CrudItinerary(CrudBase):
 
         return itinerary
 
-    def update_itinerary(self, itinerary_id, is_published_bool):
+    def publish_itinerary(self, itinerary_id):
         with Session(self.engine) as session:
         
             itinerary = session.query(ItineraryDb).filter(ItineraryDb.id == itinerary_id).one()
-            itinerary.is_published = is_published_bool
+            itinerary.is_published = not itinerary.is_published
 
             session.commit()
+            session.refresh(itinerary)
 
-        return itinerary
+        return itinerary.is_published
 
 
     def list_itineraries_by_user_id(self, user_id):

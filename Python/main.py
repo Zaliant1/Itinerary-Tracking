@@ -113,12 +113,12 @@ async def get_itinerary(itinerary_id, user=Depends(User), engine=Depends(create_
 
 
 
-@app.delete("/itinerary/{id}", dependencies=[Depends(ValidateSession())])
-async def delete_itinerary(id, engine=Depends(create_db_engine)):
+@app.delete("/itinerary/{itinerary_id}", dependencies=[Depends(ValidateSession())])
+async def delete_itinerary(itinerary_id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
     
     try:
-        itinerary_to_delete = crud.delete_itinerary(itinerary_id=id)
+        itinerary_to_delete = crud.delete_itinerary(itinerary_id=itinerary_id)
         
         return itinerary_to_delete
 
@@ -127,20 +127,14 @@ async def delete_itinerary(id, engine=Depends(create_db_engine)):
 
 
 
-@app.put("/itinerary/{itinerary_id}/published/{is_published}", dependencies=[Depends(ValidateSession())])
-async def update_itinerary(itinerary_id, is_published, engine=Depends(create_db_engine)):
+@app.put("/itinerary/{itinerary_id}/publish", dependencies=[Depends(ValidateSession())])
+async def update_itinerary(itinerary_id, engine=Depends(create_db_engine)):
     crud = CrudItinerary(engine)
-    is_published = True if is_published.lower()=="true" else False
-    
-
 
     try:
-        itinerary_to_update = crud.update_itinerary(itinerary_id=itinerary_id, is_published_bool=is_published)
+        is_published = crud.publish_itinerary(itinerary_id=itinerary_id)
 
-
-    # what im getting : true
-    # what i need is : True
-        return itinerary_to_update
+        return {"is_published": is_published}
 
     except IntegrityError:
         raise HTTPException(status_code=404, detail="Itinerary Not Found")
