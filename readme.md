@@ -1,5 +1,3 @@
-Name : Plan 2 Park
-
 
 Front : React, CSS
 Back :
